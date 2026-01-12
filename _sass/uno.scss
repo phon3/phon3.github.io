@@ -1099,11 +1099,11 @@ pre {
 .content-wrapper {
 	z-index: 800;
 	width: 60%;
-	max-width: 800px;
+	max-width: none;
 	margin-left: 40%; }
 
 .content-wrapper__inner {
-	margin: 0 10%;
+	margin: 0 40px;
 	padding: 50px 0; }
 
 .footer {
