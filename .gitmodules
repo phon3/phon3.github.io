@@ -1,0 +1,3 @@
+[submodule "host-free"]
+	path = host-free
+	url = https://github.com/phon3/host-free.git
