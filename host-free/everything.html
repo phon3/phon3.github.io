@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF8">
+	<meta name="description" content="Host-Free decompression magic">
+	<meta name="keywords" content="self hosted websites">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!-- Removed assets/js/script.js as it contained malicious shortener logic -->
+
+	<script language="javascript" src="assets/js/config.js"></script>
+	<script language="javascript" src="assets/js/lz-string.js"></script>
+
+	<script>
+
+		document.cookie.split(";").forEach(function (c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+		window.localStorage.clear()
+
+		// Get the hash (without the # symbol)
+		var hash = window.location.hash.slice(1);
+
+		// Check if this is a short key (6 characters, alphanumeric) or a long compressed hash
+		var isShortKey = hash.length === 6 && /^[A-Za-z0-9]{6}$/.test(hash);
+
+		if (isShortKey) {
+			// Short key detected - fetch from kvdb.io
+			console.log('Short key detected:', hash);
+			document.body.innerHTML = '<p style="padding: 2rem; text-align: center;">Loading from cloud storage...</p>';
+
+			fetch(KVDBConfig.getURL(hash))
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Short URL not found or expired');
+					}
+					return response.text();
+				})
+				.then(fullHash => {
+					console.log('Retrieved full hash from kvdb.io');
+					// Redirect to the full hash (could be another everything.html# or everythingEncrypted.html#)
+					window.location.href = fullHash;
+				})
+				.catch(error => {
+					document.body.innerHTML = '<p style="padding: 2rem; text-align: center; color: red;">Error: ' + error.message + '</p>';
+				});
+		} else {
+			// Long compressed hash - decompress directly
+			d = LZString.decompressFromEncodedURIComponent(hash);
+			if (d) { window.onload = s }
+		}
+
+		function s() {
+			try {
+				document.body.outerHTML = d
+				//the scripts won't be executed.
+				//make a callback to the get the scripts to work after the page has loaded.
+				setTimeout(runscripts, 144);
+			} catch (e) {
+				console.log('done goofed' + e);
+			}
+		}
+		function runscripts() {
+			var scripts = document.body.getElementsByTagName("script");
+			for (var i = 0; i < scripts.length; i++) {
+				eval(scripts[i].innerHTML);//oh the evil is here.
+			}
+		}
+
+		function make() {
+			window.open(document.location.pathname + '#' + LZString.compressToEncodedURIComponent(document.body.outerHTML));
+		}
+		//if you are reading this, you might have thought you could do something like:
+		function toDataURL() {
+			window.open(
+				'data:text/html;base64,' +
+				btoa('<!DOCTYPE html><html>' + document.head.outerHTML + document.body.outerHTML + '</HTML>')
+			)
+		}
+		//you can, it works. But many of the websites I tried do not accept URLS in this form, and there is no compression, so huge URLs!
+
+
+	</script>
+</head>
+
+<body>
+	<noscript>
+		This will not be displayed if JavaScript is enabled - that might be a good thing.
+	</noscript>
+</body>

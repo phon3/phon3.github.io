@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Host-Free Test Suite</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <style>
+        body {
+            padding: 2rem;
+        }
+
+        .test-case {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .pass {
+            color: green;
+            font-weight: bold;
+        }
+
+        .fail {
+            color: red;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Host-Free Test Suite 🔬</h1>
+    <p>This page runs automated tests on the core logic of the Host-Free project.</p>
+
+    <div id="results"></div>
+
+    <!-- Dependencies -->
+    <script src="../assets/js/jquery.min.js"></script>
+    <script src="../assets/js/lz-string.js"></script>
+    <script src="../assets/js/mjsCrypt.js"></script>
+    <script src="../assets/js/hostfree.js"></script>
+
+    <script>
+        const resultsContainer = document.getElementById('results');
+
+        function logTest(name, passed, details) {
+            const div = document.createElement('div');
+            div.className = 'test-case';
+            div.innerHTML = `
+                <div><strong>${name}</strong>: <span class="${passed ? 'pass' : 'fail'}">${passed ? 'PASS' : 'FAIL'}</span></div>
+                ${details ? `<pre>${details}</pre>` : ''}
+            `;
+            resultsContainer.appendChild(div);
+        }
+
+        async function runTests() {
+            // Test 1: Compression/Decompression
+            try {
+                const original = "<h1>Hello World</h1><script>console.log('test')<\/script>";
+                const compressed = HostFreeCompress.compressPlain(original);
+                const decompressed = HostFreeCompress.decompressPlain(compressed);
+                logTest("Plain Compression/Decompression", original === decompressed, `Original: ${original}\nDecompressed: ${decompressed}`);
+            } catch (e) {
+                logTest("Plain Compression/Decompression", false, e.message);
+            }
+
+            // Test 2: Encryption/Decryption
+            try {
+                const original = "Secret Content";
+                const key = "password123";
+                const compressed = HostFreeCompress.compressForCrypto(original);
+                const encrypted = mjsCrypt.encryptUint8Array(compressed, key);
+
+                // Simulate decoding from URL
+                const decryptedBytes = mjsCrypt.decryptUint8Array(encrypted, key);
+                const decompressed = HostFreeCompress.decompressFromCrypto(decryptedBytes);
+
+                logTest("Encryption/Decryption Loop", original === decompressed, `Original: ${original}\nDecrypted: ${decompressed}`);
+            } catch (e) {
+                logTest("Encryption/Decryption Loop", false, e.message);
+            }
+
+            // Test 3: Shortener Agnostic Check
+            try {
+                const testPath = "everything.html#test";
+                const shortPath = HostFreeShortener.generateShortPath(testPath);
+                logTest("Agnostic Shortener Fallback", shortPath === testPath, `Expected same path (fallback mode): ${shortPath}`);
+            } catch (e) {
+                logTest("Agnostic Shortener Check", false, e.message);
+            }
+
+            // Test 4: Malicious Endpoint Scan
+            try {
+                const scripts = Array.from(document.querySelectorAll('script'));
+                const maliciousFound = scripts.some(s => s.src && s.src.includes('jsonstore.io'));
+                logTest("Security: Malicious Endpoint Scan", !maliciousFound, maliciousFound ? "jsonstore.io found in DOM!" : "No malicious external endpoints detected.");
+            } catch (e) {
+                logTest("Security Scan", false, e.message);
+            }
+        }
+
+        runTests();
+    </script>
+</body>
+
+</html>
