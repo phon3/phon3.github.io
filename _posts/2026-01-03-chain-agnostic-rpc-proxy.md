@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Building a Fault-Tolerant, Chain-Agnostic RPC Proxy"
-date: 2026-01-12
+date: 2026-01-03
 categories: [blockchain, devops, nodejs]
 image: /images/profile.jpg
 ---
