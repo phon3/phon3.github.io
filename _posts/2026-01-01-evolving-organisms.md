@@ -1,6 +1,6 @@
 ---
 title: "Evolving Organisms: A Deep Dive into Neuroevolution"
-date: 2026-01-12 10:00:00 -0800
+date: 2026-01-01 10:00:00 -0800
 categories: [Research, AI, Neuroevolution]
 tags: [neat, map-elites, genetic-algorithms, artificial-life, python]
 ---
