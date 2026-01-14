@@ -1,6 +1,6 @@
 ---
 title: "Setting Up Django with PostgreSQL: A Modern Guide"
-date: 2026-01-12 15:30:00 -0800
+date: 2026-01-04 15:30:00 -0800
 tags: [django, python, postgresql, web-development, tutorial]
 author: phon3
 description: "A comprehensive walkthrough for setting up a Django web application with PostgreSQL database on Ubuntu. Updated for modern Django and Python 3."
