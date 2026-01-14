@@ -1,6 +1,6 @@
 ---
 title: "Introducing Host-Free: Serverless Data Storage in URLs"
-date: 2026-01-12 13:40:00 -0800
+date: 2026-01-02 13:40:00 -0800
 categories: [Projects, Web Development]
 tags: [javascript, encryption, url-shortening, serverless]
 pin: true
