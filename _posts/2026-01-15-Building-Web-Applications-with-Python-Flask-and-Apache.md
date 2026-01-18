@@ -562,6 +562,7 @@ if __name__ == '__main__':
 
 **Create basic template `app/templates/base.html`:**
 
+{% raw %}
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -587,9 +588,11 @@ if __name__ == '__main__':
 </body>
 </html>
 ```
+{% endraw %}
 
 **Create `app/templates/index.html`:**
 
+{% raw %}
 ```html
 {% extends "base.html" %}
 
@@ -600,6 +603,7 @@ if __name__ == '__main__':
     <p>Your Flask application is running successfully!</p>
 {% endblock %}
 ```
+{% endraw %}
 
 ### Test Your Application Locally
 
